@@ -1,7 +1,6 @@
 import vectorbt as vbt
 import pandas as pd
 import numpy as np
-from pathlib import Path
 import os
 from get_price import get_price_data
 from indicators import range_filter
