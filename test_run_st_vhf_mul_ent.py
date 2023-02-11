@@ -2,8 +2,13 @@ import vectorbt as vbt
 import pandas as pd
 import numpy as np
 import os
-from get_price import get_price_data
+from get_price import get_specific_timedata
 from indicators import range_filter
+import datetime
+
+today = datetime.datetime.now().date()
+date_format = today.strftime("%m/%d/%Y")
+
 
 def produce_signal(supertd, entry_price, low, high, start_time, end_time, _vhf_short_ma, _vhf_long_ma, _ma_short, _ma_long, vhf_threshold):
     # Signal - value of 1 to be a buy, value of 0 is neutral not sell NOR buy, and a value of -1 to close position.
@@ -63,11 +68,13 @@ ind = vbt.IndicatorFactory(
 
 stocks = ['SQQQ']
 timeframe = '1m'
-fullday = True
-month = 'January'
+end = datetime.datetime.now().date()
+start = end - datetime.timedelta(days=7)
+
+
 for stock in stocks:
-    high_price, low_price, close_price, start_time, end_time, ticker_price = get_price_data(
-        stock, timeframe=timeframe, fullday=fullday, month=month)
+    high_price, low_price, close_price, start_time, end_time, ticker_price = get_specific_timedata(
+        stock, start_time=start.strftime("%m/%d/%Y"), end_time=end.strftime("%m/%d/%Y"))
 
     lowercase_columns = [col.lower().strip() for col in ticker_price.columns]
     ticker_price.columns = lowercase_columns
@@ -141,7 +148,7 @@ for stock in stocks:
     file_name = os.path.basename(__file__)
     file_name = file_name.split('.')[0]
 
-    path = f'Results/Retuns_result_{file_name}_fullday_{fullday}.csv'
+    path = f'Results/Retuns_result_{file_name}_test.csv'
     if os.path.isfile(path):
         df.to_csv(path, mode='a', header=False)
     else:
